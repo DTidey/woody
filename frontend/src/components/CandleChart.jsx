@@ -1,4 +1,4 @@
-import { CandlestickSeries, createChart } from "lightweight-charts";
+import { CandlestickSeries, HistogramSeries, createChart } from "lightweight-charts";
 import { useEffect, useRef, useState } from "react";
 
 export default function CandleChart({ candles }) {
@@ -17,6 +17,11 @@ export default function CandleChart({ candles }) {
         autoSize: true,
         layout: {
           background: { color: "transparent" },
+          panes: {
+            enableResize: true,
+            separatorColor: "rgba(244, 239, 230, 0.08)",
+            separatorHoverColor: "rgba(139, 198, 193, 0.2)",
+          },
           textColor: "#f4efe6",
         },
         grid: {
@@ -37,7 +42,7 @@ export default function CandleChart({ candles }) {
         },
       });
 
-      const series = chart.addSeries(CandlestickSeries, {
+      const candleSeries = chart.addSeries(CandlestickSeries, {
         upColor: "#75c08f",
         downColor: "#de6b64",
         wickUpColor: "#75c08f",
@@ -45,7 +50,26 @@ export default function CandleChart({ candles }) {
         borderVisible: false,
       });
 
-      series.setData(candles);
+      const volumeSeries = chart.addSeries(
+        HistogramSeries,
+        {
+          priceFormat: {
+            type: "volume",
+          },
+        },
+        1,
+      );
+
+      candleSeries.setData(candles);
+      volumeSeries.setData(
+        candles.map((candle) => ({
+          time: candle.time,
+          value: candle.volume ?? 0,
+          color: candle.close >= candle.open ? "#75c08f" : "#de6b64",
+        })),
+      );
+
+      chart.panes()?.[1]?.setHeight(140);
       chart.timeScale().fitContent();
 
       return () => {

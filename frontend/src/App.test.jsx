@@ -48,6 +48,7 @@ describe("App", () => {
         high: 101,
         low: 99,
         close: 100.5,
+        volume: 12,
       },
     ]);
 

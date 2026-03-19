@@ -51,8 +51,9 @@ export function buildChartSeries(candles) {
     const high = toFiniteNumber(candle?.high);
     const low = toFiniteNumber(candle?.low);
     const close = toFiniteNumber(candle?.close);
+    const volume = toFiniteNumber(candle?.volume);
 
-    if ([time, open, high, low, close].some((value) => value === null)) {
+    if ([time, open, high, low, close, volume].some((value) => value === null)) {
       continue;
     }
 
@@ -60,7 +61,7 @@ export function buildChartSeries(candles) {
       continue;
     }
 
-    dedupedByTime.set(time, { time, open, high, low, close });
+    dedupedByTime.set(time, { time, open, high, low, close, volume });
   }
 
   const data = [...dedupedByTime.values()].sort((left, right) => left.time - right.time);

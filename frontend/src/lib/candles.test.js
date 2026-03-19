@@ -23,6 +23,7 @@ describe("buildChartSeries", () => {
         high: 102,
         low: 99,
         close: 101,
+        volume: 10,
       },
       {
         exchange: "binance",
@@ -33,6 +34,7 @@ describe("buildChartSeries", () => {
         high: 103,
         low: 100,
         close: 102,
+        volume: 11,
       },
       {
         exchange: "binance",
@@ -43,11 +45,12 @@ describe("buildChartSeries", () => {
         high: 102,
         low: 101,
         close: 104,
+        volume: 12,
       },
     ]);
 
     expect(result.data).toEqual([
-      { time: 1_710_000_000, open: 101, high: 103, low: 100, close: 102 },
+      { time: 1_710_000_000, open: 101, high: 103, low: 100, close: 102, volume: 11 },
     ]);
     expect(result.droppedRows).toBe(2);
     expect(result.selectedExchange).toBe("binance");
@@ -66,6 +69,7 @@ describe("buildChartSeries", () => {
         high: 107,
         low: 104,
         close: 106,
+        volume: 21,
       },
       {
         exchange: "binance",
@@ -76,12 +80,13 @@ describe("buildChartSeries", () => {
         high: 106,
         low: 99,
         close: 105,
+        volume: 34,
       },
     ]);
 
     expect(result.data).toEqual([
-      { time: 1_710_000_000, open: 100, high: 106, low: 99, close: 105 },
-      { time: 1_710_000_300, open: 105, high: 107, low: 104, close: 106 },
+      { time: 1_710_000_000, open: 100, high: 106, low: 99, close: 105, volume: 34 },
+      { time: 1_710_000_300, open: 105, high: 107, low: 104, close: 106, volume: 21 },
     ]);
   });
 });

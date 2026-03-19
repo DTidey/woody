@@ -3,7 +3,6 @@
 ## What changed
 - Added a frontend candle sanitization helper to build one valid candlestick series.
 - Updated the chart component to render inline errors instead of failing hard.
-- Added a small UI note when rows are dropped before rendering.
 
 ## Acceptance criteria coverage
 - AC1: Inspect `frontend/src/lib/candles.js` and `frontend/src/App.jsx` to confirm the newest row's symbol/timeframe defines the rendered series.
@@ -16,5 +15,4 @@
 - Mixed symbol/timeframe datasets do not get passed straight into the chart library.
 
 ## Notes
-- Automated frontend tests are not yet present in this scaffold, so validation is via linting plus manual dev-server verification.
-- A good follow-up is adding a small unit test harness for `frontend/src/lib/candles.js`.
+- Automated frontend coverage now exists through the Vitest harness, including sanitization tests in `frontend/src/lib/candles.test.js`.

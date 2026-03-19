@@ -91,3 +91,4 @@ GET /api/candles?exchange=binance&symbol=BTC-USDT&timeframe=1h&limit=200
 - 2026-03-18: On the live post-drop database, the original `DISTINCT ON` query still timed out past 15 seconds while the index-jumping replacement completed in about 112 milliseconds.
 - 2026-03-19: Simplified the frontend by removing API/debug status chrome now that the candle flow is stable enough to use as the default interface.
 - 2026-03-19: Exposed a fixed list of supported timeframes in the selector so the UI can request locally aggregated higher timeframes from the backend even though the database stores only 1m rows.
+- 2026-03-19: The earlier debug-sample experiment was superseded by the simplified `woody` chart view once the candle flow and frontend test harness were in place.

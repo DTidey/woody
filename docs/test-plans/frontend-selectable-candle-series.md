@@ -21,7 +21,6 @@
 - Empty series-options responses skip candle fetching and show an explanatory message.
 
 ## Notes
-- Current automated test coverage is strongest on the backend route behavior.
+- Automated coverage now exists for the frontend selector/data-flow behavior through the Vitest harness, though the backend route behavior remains more fully exercised.
 - The performance improvement is validated by preserving the existing route contract while changing the SQL path under it.
 - Live profiling on 2026-03-18 showed the old `DISTINCT ON` series query timing out past 15 seconds after the index drop, while the replacement query completed in about 112 milliseconds on the same database.
-- A good follow-up is adding frontend component tests once a JS test harness is introduced.

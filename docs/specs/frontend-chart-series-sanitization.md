@@ -13,7 +13,6 @@
 In scope:
 - Sanitize fetched candle rows into one chartable candlestick series before rendering.
 - Surface chart-render failures in the UI instead of crashing the screen.
-- Inform the user when rows were dropped before charting.
 
 Out of scope / non-goals:
 - Adding UI controls for symbol or timeframe selection.
@@ -36,7 +35,6 @@ Out of scope / non-goals:
   - Candle rows returned by `GET /api/candles`
 - Outputs:
   - A single sanitized candlestick series rendered in the frontend
-  - A UI note when rows are filtered or dropped
   - A visible error panel if chart rendering still fails
 - Error handling:
   - Rows with invalid timestamps or OHLC values are skipped.
@@ -66,3 +64,4 @@ Frontend chart: rows matching the newest row's symbol/timeframe, deduplicated an
 
 ## Decision log
 - 2026-03-18: Chose frontend sanitization first so the UI remains robust even if the backend continues returning mixed candle rows.
+- 2026-03-19: Later frontend cleanup removed the dropped-rows status note while preserving the underlying sanitization behavior.

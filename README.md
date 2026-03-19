@@ -46,6 +46,9 @@ DEPLOY.md
 
 ## Local Setup
 
+For a step-by-step Ubuntu 22.04 setup guide, see
+[`docs/setup-ubuntu-22.04.md`](docs/setup-ubuntu-22.04.md).
+
 Create the root environment file:
 
 ```bash

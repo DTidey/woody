@@ -1,0 +1,16 @@
+[Unit]
+Description=woody FastAPI backend
+After=network.target
+
+[Service]
+Type=simple
+User=woody
+Group=woody
+WorkingDirectory=/srv/woody
+EnvironmentFile=/srv/woody/.env
+ExecStart=/srv/woody/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --app-dir backend
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

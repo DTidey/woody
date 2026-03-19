@@ -9,7 +9,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 class Settings(BaseSettings):
     app_name: str = "Woody API"
     api_prefix: str = "/api"
-    database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/woody"
+    database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/jesse_db"
     frontend_origin: str = "http://localhost:5173"
 
     model_config = SettingsConfigDict(

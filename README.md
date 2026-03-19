@@ -51,6 +51,19 @@ make migrate
 make db-down
 ```
 
+## Production
+
+A single-server deployment path is documented in:
+
+```text
+DEPLOY.md
+```
+
+The repository also includes deployment templates for:
+
+- `deploy/nginx/woody.conf`
+- `deploy/systemd/woody-backend.service`
+
 ## Next Recommended Steps
 
 1. Replace the example SQLAlchemy model with your real domain models.

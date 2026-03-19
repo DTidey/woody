@@ -3,6 +3,7 @@
 
 ## Spec
 - `docs/specs/<slug>.md`
+- `docs/test-plans/<slug>.md`
 
 ## Acceptance Criteria
 - [ ] AC1: ...

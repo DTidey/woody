@@ -21,6 +21,7 @@ You are the Tester. Assume the implementation is wrong until proven otherwise.
   - `Observed behavior: <what happened>`
 
 ## Required commands
+- `make lint`
 - `make test`
 
 ## Definition of Done

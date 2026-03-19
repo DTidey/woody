@@ -3,6 +3,7 @@
 
 ## Spec
 - Link to `docs/specs/<slug>.md`
+- Matching test plan: `docs/test-plans/<slug>.md`
 
 ## Acceptance criteria
 - [ ] AC1 ...

@@ -4,17 +4,19 @@
 - Added a backend endpoint for available candle series options.
 - Updated the frontend to select an exchange/symbol/timeframe tuple before fetching candles.
 - Added an empty state for installs with no available candle series.
-- Added an on-screen debug panel for the sanitized candles passed to the chart.
+- Simplified the frontend copy and removed API/debug status panels once the candle flow was stable.
+- Sorted symbol options ascending and exposed supported higher timeframes in the selector.
 - Reworked the backend series-options query to jump between distinct series keys instead of scanning all candle rows.
 
 ## Acceptance criteria coverage
 - AC1: Add a backend test that verifies distinct exchange/symbol/timeframe tuples are returned newest-first from the new series-options endpoint.
 - AC2: Inspect frontend query setup to confirm candles are fetched only after a selected series exists and that the selected `exchange`, `symbol`, and `timeframe` are passed to the API request.
-- AC3: Inspect frontend UI to confirm exchange/symbol/timeframe selectors are rendered, an empty state appears when no series options are available, and a debug sample of chart-input candles is visible.
+- AC3: Inspect frontend UI to confirm the page is branded as `woody`, the API/debug stats are removed, symbol options are sorted ascending, supported higher timeframes are selectable, and an empty state appears when no series options are available.
 
 ## Edge cases
 - Duplicate DB rows for one exchange/symbol/timeframe do not create duplicate selector options.
-- Symbols with multiple timeframes expose each valid pair on the selected exchange.
+- Symbols are sorted alphabetically regardless of recency order in the backend series response.
+- Symbols with stored 1m history can request higher-timeframe chart candles through the selector even when those timeframes are not stored directly in the DB.
 - The same symbol/timeframe on multiple exchanges remains selectable as separate series.
 - Empty series-options responses skip candle fetching and show an explanatory message.
 

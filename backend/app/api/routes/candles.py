@@ -3,13 +3,14 @@ from __future__ import annotations
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy import select, text
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db_session
-from app.models.candle import Candle
+from app.services import CandleServiceError, UnsupportedTimeframeError
+from app.services import list_candles as list_candles_from_store
 
 router = APIRouter(prefix="/candles")
 DbSession = Annotated[Session, Depends(get_db_session)]
@@ -18,7 +19,7 @@ DbSession = Annotated[Session, Depends(get_db_session)]
 class CandleResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: UUID
+    id: UUID | None
     timestamp: int
     open: float
     close: float
@@ -37,25 +38,6 @@ class CandleSeriesResponse(BaseModel):
     symbol: str
     timeframe: str
     latest_timestamp: int
-
-
-def _build_candles_query(
-    *,
-    limit: int,
-    exchange: str | None = None,
-    symbol: str | None = None,
-    timeframe: str | None = None,
-):
-    query = select(Candle).order_by(Candle.timestamp.desc()).limit(limit)
-
-    if exchange:
-        query = query.where(Candle.exchange == exchange)
-    if symbol:
-        query = query.where(Candle.symbol == symbol)
-    if timeframe:
-        query = query.where(Candle.timeframe == timeframe)
-
-    return query
 
 
 def _load_candle_series(db: Session) -> list[CandleSeriesResponse]:
@@ -102,6 +84,7 @@ def _load_candle_series(db: Session) -> list[CandleSeriesResponse]:
             LIMIT 1
         ) latest
         ORDER BY
+        
             latest.latest_timestamp DESC,
             series_keys.exchange,
             series_keys.symbol,
@@ -122,21 +105,29 @@ def _load_candle_series(db: Session) -> list[CandleSeriesResponse]:
 @router.get("", response_model=list[CandleResponse])
 def list_candles(
     limit: int = Query(default=20, ge=1, le=500),
-    exchange: str | None = Query(default=None),
-    symbol: str | None = Query(default=None),
-    timeframe: str | None = Query(default=None),
+    exchange: str = Query(...),
+    symbol: str = Query(...),
+    timeframe: str = Query(...),
     db: DbSession = None,
-) -> list[Candle]:
-    return list(
-        db.scalars(
-            _build_candles_query(
-                limit=limit,
-                exchange=exchange,
-                symbol=symbol,
-                timeframe=timeframe,
-            )
+) -> list[CandleResponse]:
+    try:
+        return list_candles_from_store(
+            db=db,
+            exchange=exchange,
+            symbol=symbol,
+            timeframe=timeframe,
+            limit=limit,
         )
-    )
+    except UnsupportedTimeframeError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+    except CandleServiceError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(exc),
+        ) from exc
 
 
 @router.get("/series", response_model=list[CandleSeriesResponse])

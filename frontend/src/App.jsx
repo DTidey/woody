@@ -3,7 +3,25 @@ import { useQuery } from "@tanstack/react-query";
 
 import CandleChart from "./components/CandleChart";
 import { buildChartSeries } from "./lib/candles";
-import { apiBaseUrl, fetchCandles, fetchCandleSeriesOptions } from "./lib/api";
+import { fetchCandles, fetchCandleSeriesOptions } from "./lib/api";
+
+const SUPPORTED_TIMEFRAMES = [
+  "1m",
+  "3m",
+  "5m",
+  "15m",
+  "30m",
+  "45m",
+  "1h",
+  "2h",
+  "3h",
+  "4h",
+  "6h",
+  "8h",
+  "12h",
+  "1d",
+  "1w",
+];
 
 export default function App() {
   const [selectedExchange, setSelectedExchange] = useState("");
@@ -18,16 +36,15 @@ export default function App() {
     queryKey: ["candle-series-options"],
     queryFn: fetchCandleSeriesOptions,
   });
+
   const seriesOptions = seriesOptionsData ?? [];
   const availableExchanges = [...new Set(seriesOptions.map((series) => series.exchange))];
   const exchangeSeries = seriesOptions.filter((series) => series.exchange === selectedExchange);
-  const availableSymbols = [...new Set(exchangeSeries.map((series) => series.symbol))];
-  const timeframesForSymbol = seriesOptions
-    .filter(
-      (series) =>
-        series.exchange === selectedExchange && series.symbol === selectedSymbol,
-    )
-    .map((series) => series.timeframe);
+  const availableSymbols = [...new Set(exchangeSeries.map((series) => series.symbol))].sort(
+    (left, right) => left.localeCompare(right),
+  );
+  const availableTimeframes =
+    selectedExchange && selectedSymbol ? SUPPORTED_TIMEFRAMES : [];
 
   useEffect(() => {
     if (seriesOptions.length === 0) {
@@ -43,30 +60,28 @@ export default function App() {
     ) {
       setSelectedExchange(seriesOptions[0].exchange);
       setSelectedSymbol(seriesOptions[0].symbol);
-      setSelectedTimeframe(seriesOptions[0].timeframe);
+      setSelectedTimeframe("1m");
       return;
     }
 
     const matchingExchangeSeries = seriesOptions.filter(
       (series) => series.exchange === selectedExchange,
     );
+
     if (
       !selectedSymbol ||
       !matchingExchangeSeries.some((series) => series.symbol === selectedSymbol)
     ) {
-      setSelectedSymbol(matchingExchangeSeries[0]?.symbol ?? "");
-      setSelectedTimeframe(matchingExchangeSeries[0]?.timeframe ?? "");
+      const nextSymbol = [...new Set(matchingExchangeSeries.map((series) => series.symbol))].sort(
+        (left, right) => left.localeCompare(right),
+      )[0];
+      setSelectedSymbol(nextSymbol ?? "");
+      setSelectedTimeframe("1m");
       return;
     }
 
-    const matchingSeries = matchingExchangeSeries.filter(
-      (series) => series.symbol === selectedSymbol,
-    );
-    if (
-      matchingSeries.length > 0 &&
-      !matchingSeries.some((series) => series.timeframe === selectedTimeframe)
-    ) {
-      setSelectedTimeframe(matchingSeries[0].timeframe);
+    if (!SUPPORTED_TIMEFRAMES.includes(selectedTimeframe)) {
+      setSelectedTimeframe("1m");
     }
   }, [selectedExchange, selectedSymbol, selectedTimeframe, seriesOptions]);
 
@@ -95,50 +110,15 @@ export default function App() {
   });
 
   const candles = data ?? [];
-  const latest = candles[0];
   const chartSeries = buildChartSeries(candles);
   const hasNoSeries = !isSeriesLoading && !seriesError && seriesOptions.length === 0;
-  const debugSample = chartSeries.data.slice(0, 5);
 
   return (
     <main className="app-shell">
       <section className="dashboard">
         <div className="headline">
-          <p className="eyebrow">TradingView Lightweight Charts</p>
-          <h1>Candle data, wired end to end.</h1>
-          <p className="lede">
-            Your React frontend now fetches candle rows from FastAPI and renders
-            them in a proper market chart.
-          </p>
-        </div>
-
-        <div className="stats-grid">
-          <article className="stat-card">
-            <span className="stat-label">API</span>
-            <code>{apiBaseUrl}</code>
-          </article>
-          <article className="stat-card">
-            <span className="stat-label">Rows loaded</span>
-            <strong>{candles.length}</strong>
-          </article>
-          <article className="stat-card">
-            <span className="stat-label">Chart candles</span>
-            <strong>{chartSeries.data.length}</strong>
-          </article>
-          <article className="stat-card">
-            <span className="stat-label">Latest exchange</span>
-            <strong>{chartSeries.selectedExchange ?? latest?.exchange ?? "Waiting for data"}</strong>
-          </article>
-          <article className="stat-card">
-            <span className="stat-label">Latest symbol</span>
-            <strong>{chartSeries.selectedSymbol ?? latest?.symbol ?? "Waiting for data"}</strong>
-          </article>
-          <article className="stat-card">
-            <span className="stat-label">Latest timeframe</span>
-            <strong>
-              {chartSeries.selectedTimeframe ?? latest?.timeframe ?? "Waiting for data"}
-            </strong>
-          </article>
+          <h1>woody</h1>
+          <p className="lede">Choose a market, pick a timeframe, and chart the candles.</p>
         </div>
 
         <section className="controls-panel">
@@ -168,12 +148,17 @@ export default function App() {
                   value={selectedExchange}
                   onChange={(event) => {
                     const nextExchange = event.target.value;
-                    const nextSeries = seriesOptions.find(
-                      (series) => series.exchange === nextExchange,
-                    );
+                    const nextSymbol = [
+                      ...new Set(
+                        seriesOptions
+                          .filter((series) => series.exchange === nextExchange)
+                          .map((series) => series.symbol),
+                      ),
+                    ].sort((left, right) => left.localeCompare(right))[0];
+
                     setSelectedExchange(nextExchange);
-                    setSelectedSymbol(nextSeries?.symbol ?? "");
-                    setSelectedTimeframe(nextSeries?.timeframe ?? "");
+                    setSelectedSymbol(nextSymbol ?? "");
+                    setSelectedTimeframe("1m");
                   }}
                 >
                   {availableExchanges.map((exchange) => (
@@ -189,13 +174,8 @@ export default function App() {
                 <select
                   value={selectedSymbol}
                   onChange={(event) => {
-                    const nextSymbol = event.target.value;
-                    const nextTimeframe = seriesOptions.find(
-                      (series) =>
-                        series.exchange === selectedExchange && series.symbol === nextSymbol,
-                    )?.timeframe ?? "";
-                    setSelectedSymbol(nextSymbol);
-                    setSelectedTimeframe(nextTimeframe);
+                    setSelectedSymbol(event.target.value);
+                    setSelectedTimeframe("1m");
                   }}
                 >
                   {availableSymbols.map((symbol) => (
@@ -212,7 +192,7 @@ export default function App() {
                   value={selectedTimeframe}
                   onChange={(event) => setSelectedTimeframe(event.target.value)}
                 >
-                  {timeframesForSymbol.map((timeframe) => (
+                  {availableTimeframes.map((timeframe) => (
                     <option key={timeframe} value={timeframe}>
                       {timeframe}
                     </option>
@@ -233,16 +213,6 @@ export default function App() {
             {error ? <span className="status-chip error">API error</span> : null}
           </div>
 
-          {chartSeries.droppedRows > 0 && !error ? (
-            <div className="chart-note">
-              Showing {chartSeries.data.length} clean candles for{" "}
-              {chartSeries.selectedExchange ?? "the latest exchange"} /{" "}
-              {chartSeries.selectedSymbol ?? "the latest symbol"} /{" "}
-              {chartSeries.selectedTimeframe ?? "the latest timeframe"} after dropping{" "}
-              {chartSeries.droppedRows} rows that did not fit one chartable series.
-            </div>
-          ) : null}
-
           {hasNoSeries ? (
             <div className="panel-message">
               <p>Selectable candle series will appear here once data is available.</p>
@@ -255,40 +225,6 @@ export default function App() {
           ) : (
             <CandleChart candles={chartSeries.data} />
           )}
-
-          {!hasNoSeries && !error ? (
-            <div className="debug-panel">
-              <div className="panel-header">
-                <div>
-                  <p className="panel-kicker">Chart debug</p>
-                  <h2>Rows passed to the chart</h2>
-                </div>
-              </div>
-              <div className="debug-meta">
-                <span>
-                  Series: {chartSeries.selectedExchange ?? selectedExchange ?? "N/A"} /{" "}
-                  {chartSeries.selectedSymbol ?? selectedSymbol ?? "N/A"} /{" "}
-                  {chartSeries.selectedTimeframe ?? selectedTimeframe ?? "N/A"}
-                </span>
-                <span>Showing {debugSample.length} of {chartSeries.data.length} rows</span>
-              </div>
-              <pre className="debug-json">{JSON.stringify(debugSample, null, 2)}</pre>
-            </div>
-          ) : null}
-        </section>
-
-        <section className="notes-panel">
-          <div className="panel-header">
-            <div>
-              <p className="panel-kicker">Next step</p>
-              <h2>Good follow-ups from here</h2>
-            </div>
-          </div>
-          <ul className="todo-list">
-            <li>Add symbol and timeframe selectors wired into the query.</li>
-            <li>Show OHLC and volume for the hovered candle.</li>
-            <li>Create separate views for watchlists or strategy sessions.</li>
-          </ul>
         </section>
       </section>
     </main>

@@ -70,20 +70,29 @@ systemd:
 - AC1: The repository includes a deployment guide describing how to build the frontend, install backend dependencies, run Alembic migrations, and start the backend for production.
 - AC2: The repository includes a reverse proxy config template that serves the frontend statically and proxies `/api` requests to the backend service.
 - AC3: The repository includes a backend service template and an environment example consistent with the current application defaults, including the existing `jesse_db` database name.
-- AC4: `DEPLOY.md` documents the recommended `woody` service-account permissions, the separate deploy/admin responsibilities, and the minimum file access needed for systemd and nginx.
+- AC4: `DEPLOY.md` documents the recommended `woody` service-account permissions, the separate deploy/admin responsibilities, and the minimum file access needed for systemd and nginx, including nginx traverse access to the parent directories for `frontend/dist`.
+- AC5: `DEPLOY.md` documents production frontend API configuration using a same-origin `VITE_API_BASE_URL=/api`, the exact public `FRONTEND_ORIGIN`, and the rebuild or restart steps required when those values change.
+- AC6: `DEPLOY.md` documents how to run the site behind a Cloudflare Tunnel, including routing the tunnel to local nginx, disabling the default nginx site, and matching `server_name` to the public hostname.
 
 ## Edge cases
 - Frontend routes should fall back to `index.html` so client-side navigation keeps working.
 - Proxy configuration must preserve `/api` routing without rewriting the application prefix away.
 - The example environment file should not reference removed Jesse-era defaults.
+- Production frontend builds should not bake in stale LAN or localhost API origins.
+- nginx may serve its default welcome page if the application site is enabled incorrectly or the hostname does not match the configured `server_name`.
 
 ## Test guidance
 - AC1 -> inspect `DEPLOY.md` and `README.md`
 - AC2 -> inspect `deploy/nginx/woody.conf`
 - AC3 -> inspect `deploy/systemd/woody-backend.service` and `.env.example`
 - AC4 -> inspect `DEPLOY.md`
+- AC5 -> inspect `DEPLOY.md`
+- AC6 -> inspect `DEPLOY.md`
 
 ## Decision log
 - 2026-03-19: Chose a single-server deployment path first because it is the smallest useful production target for the current app shape.
 - 2026-03-19: Chose a reverse-proxy plus Uvicorn service layout so the frontend can be served statically while the backend remains a small FastAPI process.
 - 2026-03-20: Recommended a separate deploy/admin user and a low-privilege `woody` service account so production access stays minimal while deploy steps remain practical.
+- 2026-03-20: Clarified that nginx needs execute permission on each parent directory leading to `frontend/dist`, not just read permission on the built files.
+- 2026-03-20: Recommended `VITE_API_BASE_URL=/api` for production so the frontend uses the nginx proxy on the same origin instead of a stale absolute API host.
+- 2026-03-20: Documented Cloudflare Tunnel deployment by keeping nginx as the local origin and disabling the default nginx site to avoid the welcome page.

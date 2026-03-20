@@ -58,9 +58,11 @@ cp .env.example .env
 Set up Python dependencies:
 
 ```bash
-make venv
+make venv PYTHON=python3.12
 make sync
 ```
+
+On Ubuntu 22.04, prefer `PYTHON=python3.12` so the virtualenv matches the pinned dependency set in this repo.
 
 Start PostgreSQL and run migrations:
 

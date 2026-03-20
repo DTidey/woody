@@ -1,16 +1,18 @@
 .PHONY: venv compile sync lint test precommit backend-dev frontend-dev db-up db-down migrate
 
+PYTHON ?= python3
+
 venv:
-	python -m venv .venv
+	$(PYTHON) -m venv .venv
 
 compile:
-	. .venv/bin/activate && python -m pip install -U pip setuptools wheel pip-tools
-	. .venv/bin/activate && pip-compile requirements.in -o requirements.txt
-	. .venv/bin/activate && pip-compile requirements-dev.in -o requirements-dev.txt
+	. .venv/bin/python -m pip install -U pip setuptools wheel pip-tools
+	.venv/bin/pip-compile requirements.in -o requirements.txt
+	.venv/bin/pip-compile requirements-dev.in -o requirements-dev.txt
 
 sync:
-	. .venv/bin/activate && python -m pip install -U pip setuptools wheel
-	. .venv/bin/activate && pip-sync requirements.txt requirements-dev.txt
+	.venv/bin/python -m pip install -U pip setuptools wheel pip-tools
+	.venv/bin/pip-sync requirements.txt requirements-dev.txt
 
 lint:
 	. .venv/bin/activate && ruff check .

@@ -15,6 +15,7 @@ In scope:
 - Provide configuration templates for a backend service and reverse proxy.
 - Correct the environment example so it matches the current application defaults.
 - Describe the production build, migration, and rollout steps for backend and frontend.
+- Document the recommended Linux user and permissions model for the backend service account and deploy/admin user.
 
 Out of scope / non-goals:
 - Kubernetes or multi-node deployment.
@@ -48,6 +49,7 @@ Out of scope / non-goals:
   - A documented deployment path for serving `/` from static frontend assets
   - A documented deployment path for proxying `/api` to FastAPI
   - A backend service unit and reverse proxy config template
+  - A documented permissions model covering the `woody` service account, deploy/admin responsibilities, and required filesystem access
 - Error handling:
   - The deployment guide should include validation steps so the operator can confirm backend health, static frontend serving, and API proxying after rollout.
 
@@ -68,6 +70,7 @@ systemd:
 - AC1: The repository includes a deployment guide describing how to build the frontend, install backend dependencies, run Alembic migrations, and start the backend for production.
 - AC2: The repository includes a reverse proxy config template that serves the frontend statically and proxies `/api` requests to the backend service.
 - AC3: The repository includes a backend service template and an environment example consistent with the current application defaults, including the existing `jesse_db` database name.
+- AC4: `DEPLOY.md` documents the recommended `woody` service-account permissions, the separate deploy/admin responsibilities, and the minimum file access needed for systemd and nginx.
 
 ## Edge cases
 - Frontend routes should fall back to `index.html` so client-side navigation keeps working.
@@ -78,7 +81,9 @@ systemd:
 - AC1 -> inspect `DEPLOY.md` and `README.md`
 - AC2 -> inspect `deploy/nginx/woody.conf`
 - AC3 -> inspect `deploy/systemd/woody-backend.service` and `.env.example`
+- AC4 -> inspect `DEPLOY.md`
 
 ## Decision log
 - 2026-03-19: Chose a single-server deployment path first because it is the smallest useful production target for the current app shape.
 - 2026-03-19: Chose a reverse-proxy plus Uvicorn service layout so the frontend can be served statically while the backend remains a small FastAPI process.
+- 2026-03-20: Recommended a separate deploy/admin user and a low-privilege `woody` service account so production access stays minimal while deploy steps remain practical.

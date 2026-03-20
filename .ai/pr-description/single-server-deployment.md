@@ -2,10 +2,12 @@
 - Added a production deployment guide for a single Linux server.
 - Added nginx and systemd templates for serving the frontend statically and running the FastAPI backend behind `/api`.
 - Corrected the example environment file and deployment docs to match current app defaults, including the existing `jesse_db` database name.
+- Added guidance for the `woody` service account, recommended deploy/admin split, and minimum runtime file permissions.
 
 - [x] AC1: The repository includes a deployment guide describing how to build the frontend, install backend dependencies, run Alembic migrations, and start the backend for production.
 - [x] AC2: The repository includes a reverse proxy config template that serves the frontend statically and proxies `/api` requests to the backend service.
 - [x] AC3: The repository includes a backend service template and an environment example consistent with the current application defaults, including the existing `jesse_db` database name.
+- [x] AC4: `DEPLOY.md` documents the recommended `woody` service-account permissions, the separate deploy/admin responsibilities, and the minimum file access needed for systemd and nginx.
 
 - Validation run:
   - `make lint`

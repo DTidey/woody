@@ -33,6 +33,15 @@ git clone <your-repo-url> /srv/woody
 cd /srv/woody
 ```
 
+On Ubuntu 22.04, install Python 3.12 explicitly instead of relying on the OS default:
+
+```bash
+sudo add-apt-repository ppa:deadsnakes/ppa -y
+sudo apt update
+sudo apt install -y python3.12 python3.12-venv python3.12-dev
+python3.12 --version
+```
+
 ## Environment
 
 Create a production `.env` at the repo root:
@@ -56,9 +65,11 @@ VITE_API_BASE_URL=https://your-domain.example/api
 Create and sync the virtualenv:
 
 ```bash
-make venv
+make venv PYTHON=python3.12
 make sync
 ```
+
+This avoids depending on whichever interpreter `/usr/bin/python3` currently points to on the server. `make sync` installs `pip-tools` into the virtualenv before running `pip-sync`.
 
 Run database migrations:
 
@@ -107,6 +118,50 @@ sudo systemctl daemon-reload
 sudo systemctl enable woody-backend
 sudo systemctl start woody-backend
 sudo systemctl status woody-backend
+```
+
+## Users and permissions
+
+Recommended split:
+
+- `woody`: low-privilege service account that runs the backend process
+- deploy/admin user: interactive user that pulls code, installs packages, runs builds and migrations, and manages system services
+
+The `woody` user does not need `sudo`, Docker group access, or permission to bind privileged ports because the backend listens on `127.0.0.1:8000`.
+
+Minimum access for `woody`:
+
+- read and execute access to the app tree under `/srv/woody`
+- read access to `/srv/woody/.env`
+- execute access to `/srv/woody/.venv/bin/uvicorn`
+- network access to PostgreSQL using the credentials in `DATABASE_URL`
+
+nginx also needs read access to `/srv/woody/frontend/dist` so it can serve the built frontend assets.
+
+One practical setup is:
+
+```bash
+sudo adduser --system --group --home /srv/woody woody
+sudo adduser deployer
+sudo usermod -aG sudo deployer
+sudo chown -R deployer:woody /srv/woody
+sudo find /srv/woody -type d -exec chmod 750 {} \;
+sudo find /srv/woody -type f -exec chmod 640 {} \;
+sudo chmod 640 /srv/woody/.env
+sudo find /srv/woody/frontend/dist -type d -exec chmod 755 {} \;
+sudo find /srv/woody/frontend/dist -type f -exec chmod 644 {} \;
+```
+
+With that split:
+
+- the deploy/admin user can update code, run `make sync`, run `make migrate`, and build `frontend/dist`
+- the `woody` group grants the backend service read access to the app files
+- nginx can read the built frontend assets
+
+If `woody` is only used by systemd, consider disabling interactive shell access:
+
+```bash
+sudo usermod -s /usr/sbin/nologin woody
 ```
 
 ## nginx configuration

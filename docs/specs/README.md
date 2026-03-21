@@ -9,6 +9,7 @@ Naming convention:
 - Matching test plans use the same filename: `docs/test-plans/<nn>-<slug>.md`
 - Matching PR drafts use `.ai/pr-description/<nn>-<slug>.md`
 - Use the next available prefix for new work and do not renumber existing packets
+- These packet numbers are not release versions; releases belong in `CHANGELOG.md`
 
 Every spec should include:
 - Scope and non-goals

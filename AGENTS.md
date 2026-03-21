@@ -16,6 +16,8 @@ This repository uses a spec-first, multi-agent workflow. The spec in `docs/specs
 - No behavior beyond spec without first updating the spec.
 - Every new spec/test-plan/PR-draft change packet must use the same two-digit prefix, such as `03-my-change.md`.
 - Assign the next available prefix and never renumber old packets after they land.
+- Release versions use `MAJOR.MINOR.PATCH` formatting in `CHANGELOG.md`.
+- Do not create a new release unless the user explicitly asks for one.
 - Acceptance criteria must be labeled `AC1`, `AC2`, `AC3`, ...
 - Acceptance criteria must be testable and mapped to tests.
 - Ambiguities must be surfaced explicitly, not guessed silently.
@@ -53,3 +55,7 @@ Reviewer blockers must include:
 - `make lint` and `make test` pass.
 - CI is green.
 - Shipped behavior matches the current spec.
+
+## Release Notes
+- `CHANGELOG.md` tracks intentional release history separately from numbered spec packets.
+- Keep unreleased work under `## Unreleased` until an explicit release request is made.

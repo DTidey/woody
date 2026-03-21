@@ -10,6 +10,10 @@ It includes:
 - Lightweight Charts rendering for price candles and volume
 - A spec-first workflow for changes in `docs/specs/`
 
+Project history uses two parallel conventions:
+- Numbered spec packets like `docs/specs/09-release-changelog-policy.md` track implementation order.
+- Release versions in `CHANGELOG.md` use `MAJOR.MINOR.PATCH` formatting and are created only on explicit request.
+
 ## What The App Does
 
 The frontend loads available candle series from `/api/candles/series`, defaults to the newest
@@ -120,6 +124,14 @@ For code changes:
 Use the next available two-digit prefix such as `03-frontend-selectable-candle-series.md`, and keep that number stable once it exists.
 
 Acceptance criteria in specs must be labeled `AC1`, `AC2`, `AC3`, and so on.
+
+## Releases
+
+Release notes live in `CHANGELOG.md`.
+
+- Keep ongoing changes under `Unreleased`.
+- Cut a versioned section like `0.1.0` only when you explicitly want to create a release.
+- Treat numbered spec packets and release versions as separate concepts.
 
 ## Production
 

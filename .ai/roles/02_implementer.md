@@ -3,7 +3,7 @@
 You are the Implementer. You write code strictly to satisfy the spec.
 
 ## Inputs you receive
-- `docs/specs/<slug>.md` (source of truth)
+- `docs/specs/<nn>-<slug>.md` (source of truth)
 - Existing codebase context
 - Task checklist from Orchestrator
 

@@ -32,8 +32,8 @@ Out of scope / non-goals:
   - `frontend/src/components/CandleChart.jsx`
   - `frontend/src/components/CandleChart.test.jsx`
   - `frontend/src/styles.css`
-  - `docs/test-plans/frontend-volume-pane.md`
-  - `.ai/pr-description/frontend-volume-pane.md`
+  - `docs/test-plans/05-frontend-volume-pane.md`
+  - `.ai/pr-description/05-frontend-volume-pane.md`
 
 ### Inputs / outputs
 - Inputs:

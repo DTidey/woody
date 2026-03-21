@@ -47,10 +47,10 @@ Out of scope / non-goals:
 
 ### Examples
 ```text
-Spec: docs/specs/ai-workflow-guardrails.md
-Test plan: docs/test-plans/ai-workflow-guardrails.md
+Spec: docs/specs/00-ai-workflow-guardrails.md
+Test plan: docs/test-plans/00-ai-workflow-guardrails.md
 PR body:
-- Link to docs/specs/ai-workflow-guardrails.md
+- Link to docs/specs/00-ai-workflow-guardrails.md
 - [x] AC1 ...
 - [x] AC2 ...
 - [x] AC3 ...
@@ -59,7 +59,7 @@ PR body:
 ## Acceptance criteria
 - AC1: For code-changing PRs, the linked spec in the PR body must exist and must be one of the spec files changed in the PR.
 - AC2: For code-changing PRs, the PR body must include checked entries for every acceptance criterion defined in the linked spec, and must not reference unknown AC IDs.
-- AC3: For code-changing PRs, a test plan file must exist at `docs/test-plans/<slug>.md` and that file must be added or updated in the PR.
+- AC3: For code-changing PRs, a test plan file must exist at `docs/test-plans/<nn>-<slug>.md` and that file must be added or updated in the PR.
 
 ## Edge cases
 - Docs-only PRs should not require a spec or test plan update.
@@ -72,4 +72,4 @@ PR body:
 - AC3 -> validator unit tests for matching test plan path existence and changed-file checks
 
 ## Decision log
-- 2026-03-18: Standardized test plan location as `docs/test-plans/<slug>.md` to make AI outputs discoverable and machine-checkable.
+- 2026-03-18: Standardized test plan location as `docs/test-plans/<nn>-<slug>.md` to make AI outputs discoverable and machine-checkable.

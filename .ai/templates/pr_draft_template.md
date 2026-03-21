@@ -2,8 +2,8 @@
 - Describe the behavior change in 2-4 bullets.
 
 ## Spec
-- `docs/specs/<slug>.md`
-- `docs/test-plans/<slug>.md`
+- `docs/specs/<nn>-<slug>.md`
+- `docs/test-plans/<nn>-<slug>.md`
 
 ## Acceptance Criteria
 - [ ] AC1: ...

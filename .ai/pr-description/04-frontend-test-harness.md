@@ -1,4 +1,4 @@
-- Linked spec: `docs/specs/frontend-test-harness.md`
+- Linked spec: `docs/specs/04-frontend-test-harness.md`
 - Added a lightweight frontend test harness using Vitest, jsdom, and Testing Library.
 - Added unit tests for candle sanitization behavior and component tests for `App.jsx` selector/data-flow behavior with the chart mocked.
 - Added a frontend package test script for local test runs.

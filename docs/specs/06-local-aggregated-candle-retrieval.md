@@ -37,8 +37,8 @@ Out of scope / non-goals:
   - `backend/app/services/candles.py`
   - `backend/tests/test_candle_service.py`
   - `backend/tests/test_candles_route.py`
-  - `docs/test-plans/local-aggregated-candle-retrieval.md`
-  - `.ai/pr-description/local-aggregated-candle-retrieval.md`
+  - `docs/test-plans/06-local-aggregated-candle-retrieval.md`
+  - `.ai/pr-description/06-local-aggregated-candle-retrieval.md`
 
 ### Inputs / outputs
 - Inputs:

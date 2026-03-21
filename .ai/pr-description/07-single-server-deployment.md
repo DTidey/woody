@@ -1,4 +1,4 @@
-- Linked spec: `docs/specs/single-server-deployment.md`
+- Linked spec: `docs/specs/07-single-server-deployment.md`
 - Added a production deployment guide for a single Linux server.
 - Added nginx and systemd templates for serving the frontend statically and running the FastAPI backend behind `/api`.
 - Corrected the example environment file and deployment docs to match current app defaults, including the existing `jesse_db` database name.

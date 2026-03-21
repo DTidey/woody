@@ -35,9 +35,9 @@ Out of scope / non-goals:
   - `README.md`
   - `DEPLOY.md`
   - `docs/setup-ubuntu-22.04.md`
-  - `docs/specs/ubuntu-prerequisites-setup.md`
-  - `docs/test-plans/ubuntu-prerequisites-setup.md`
-  - `.ai/pr-description/ubuntu-prerequisites-setup.md`
+  - `docs/specs/08-ubuntu-prerequisites-setup.md`
+  - `docs/test-plans/08-ubuntu-prerequisites-setup.md`
+  - `.ai/pr-description/08-ubuntu-prerequisites-setup.md`
 
 ### Inputs / outputs
 - Inputs:

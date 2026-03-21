@@ -1,4 +1,4 @@
-- Linked spec: `docs/specs/local-aggregated-candle-retrieval.md`
+- Linked spec: `docs/specs/06-local-aggregated-candle-retrieval.md`
 - Replaced the backend `/api/candles` Jesse runtime path with a local candle aggregation service in `backend/app/services/candles.py`.
 - Updated the route contract to require `exchange`, `symbol`, and `timeframe`, preserve millisecond timestamps, and allow `id: null` for synthesized candles.
 - Added backend route and service tests covering 1m source-row loading, higher-timeframe aggregation, limit trimming, and incomplete-bucket handling.

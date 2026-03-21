@@ -3,7 +3,7 @@
 ## What changed
 - Tightened PR validation so code PRs must update the exact linked spec.
 - Required checked PR-body coverage for every AC in the linked spec.
-- Standardized test plan files at `docs/test-plans/<slug>.md` and required them for code PRs.
+- Standardized test plan files at `docs/test-plans/<nn>-<slug>.md` and required them for code PRs.
 
 ## Acceptance criteria coverage
 - AC1: Tests verify the linked spec must be present in the PR's changed spec files.

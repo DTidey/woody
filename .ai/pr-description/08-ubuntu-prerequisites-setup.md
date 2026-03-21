@@ -1,4 +1,4 @@
-- Linked spec: `docs/specs/ubuntu-prerequisites-setup.md`
+- Linked spec: `docs/specs/08-ubuntu-prerequisites-setup.md`
 - Aligned the Ubuntu setup guide, README, and deployment guide around an explicit Python 3.12 virtualenv workflow.
 - Added guidance for making `python` resolve to Python 3.12 safely on Ubuntu 22.04 without changing the system `python3`.
 - Fixed the bootstrap path so `make sync` installs `pip-tools` before calling `pip-sync` in a fresh virtualenv.

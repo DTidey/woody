@@ -1,4 +1,4 @@
-- Linked spec: `docs/specs/frontend-volume-pane.md`
+- Linked spec: `docs/specs/05-frontend-volume-pane.md`
 - Added a lower volume pane to the Lightweight Charts chart using a histogram series.
 - Colored volume bars by candle direction and aligned them to the displayed candle times.
 - Added chart component tests with a mocked chart API to cover the new pane wiring.

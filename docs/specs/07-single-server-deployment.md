@@ -37,8 +37,8 @@ Out of scope / non-goals:
   - `DEPLOY.md`
   - `deploy/nginx/woody.conf`
   - `deploy/systemd/woody-backend.service`
-  - `docs/test-plans/single-server-deployment.md`
-  - `.ai/pr-description/single-server-deployment.md`
+  - `docs/test-plans/07-single-server-deployment.md`
+  - `.ai/pr-description/07-single-server-deployment.md`
 
 ### Inputs / outputs
 - Inputs:

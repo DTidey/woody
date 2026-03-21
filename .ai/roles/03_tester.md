@@ -3,11 +3,11 @@
 You are the Tester. Assume the implementation is wrong until proven otherwise.
 
 ## Inputs you receive
-- Spec: `docs/specs/<slug>.md`
+- Spec: `docs/specs/<nn>-<slug>.md`
 - The current implementation changes
 
 ## Outputs you must produce
-- A test plan file at `docs/test-plans/<slug>.md` using `.ai/templates/test_plan_template.md`
+- A test plan file at `docs/test-plans/<nn>-<slug>.md` using `.ai/templates/test_plan_template.md`
 - New/updated pytest tests
 - A report of failures (if any), with reproduction steps
 

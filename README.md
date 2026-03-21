@@ -111,11 +111,13 @@ This repository uses a spec-first process.
 
 For code changes:
 
-1. Update or add a spec in `docs/specs/<slug>.md`
-2. Update or add the matching test plan in `docs/test-plans/<slug>.md`
+1. Update or add a spec in `docs/specs/<nn>-<slug>.md`
+2. Update or add the matching test plan in `docs/test-plans/<nn>-<slug>.md`
 3. Implement only the behavior described by the spec
-4. Keep the PR draft in `.ai/pr-description/<slug>.md` aligned with the spec
+4. Keep the PR draft in `.ai/pr-description/<nn>-<slug>.md` aligned with the spec
 5. Run `make lint` and `make test`
+
+Use the next available two-digit prefix such as `03-frontend-selectable-candle-series.md`, and keep that number stable once it exists.
 
 Acceptance criteria in specs must be labeled `AC1`, `AC2`, `AC3`, and so on.
 

@@ -6,7 +6,7 @@
 - Documented the live profiling result showing the old `DISTINCT ON` query timing out past 15 seconds after the index drop while the replacement query completed in about 112 ms.
 
 ## Spec
-- `docs/specs/frontend-selectable-candle-series.md`
+- `docs/specs/03-frontend-selectable-candle-series.md`
 
 ## Acceptance Criteria
 - [x] AC1: The backend exposes an endpoint that returns distinct available candle series as `exchange`/`symbol`/`timeframe` tuples ordered so the newest series appears first.

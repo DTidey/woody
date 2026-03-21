@@ -2,7 +2,13 @@
 
 Each feature/change should have a spec in this folder.
 
-Code-changing specs should also have a matching test plan in `docs/test-plans/<slug>.md`.
+Code-changing specs should also have a matching test plan in `docs/test-plans/<nn>-<slug>.md`.
+
+Naming convention:
+- Spec packets use a stable two-digit prefix: `docs/specs/<nn>-<slug>.md`
+- Matching test plans use the same filename: `docs/test-plans/<nn>-<slug>.md`
+- Matching PR drafts use `.ai/pr-description/<nn>-<slug>.md`
+- Use the next available prefix for new work and do not renumber existing packets
 
 Every spec should include:
 - Scope and non-goals

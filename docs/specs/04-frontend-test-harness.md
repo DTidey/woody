@@ -36,8 +36,8 @@ Out of scope / non-goals:
   - `frontend/src/test/setup.js`
   - `frontend/src/**/*.test.jsx`
   - `frontend/src/**/*.test.js`
-  - `docs/test-plans/frontend-test-harness.md`
-  - `.ai/pr-description/frontend-test-harness.md`
+  - `docs/test-plans/04-frontend-test-harness.md`
+  - `.ai/pr-description/04-frontend-test-harness.md`
 
 ### Inputs / outputs
 - Inputs:

@@ -97,6 +97,7 @@ The frontend reads `VITE_*` variables from the repo root `.env`.
 ```bash
 make lint
 make test
+make security
 make db-up
 make db-down
 make migrate
@@ -119,11 +120,18 @@ For code changes:
 2. Update or add the matching test plan in `docs/test-plans/<nn>-<slug>.md`
 3. Implement only the behavior described by the spec
 4. Keep the PR draft in `.ai/pr-description/<nn>-<slug>.md` aligned with the spec
-5. Run `make lint` and `make test`
+5. Run `make lint`, `make test`, and `make security`
 
 Use the next available two-digit prefix such as `03-frontend-selectable-candle-series.md`, and keep that number stable once it exists.
 
 Acceptance criteria in specs must be labeled `AC1`, `AC2`, `AC3`, and so on.
+
+## Security Review
+
+- Code-changing specs should include a `Security considerations` section so authors can call out auth/authz, input handling, secrets, data exposure, file access, network access, and dependency impact.
+- PR materials should summarize the security review disposition so reviewers know whether there is no meaningful security impact or a sensitive area that needs extra scrutiny.
+- This repository currently uses `make security` as the default automation entry point, backed by Bandit and pip-audit.
+- The default `pip-audit` invocation currently ignores `CVE-2026-4539` for `pygments` because no fixed version was available when this workflow was added; revisit that exception when upstream guidance changes.
 
 ## Releases
 

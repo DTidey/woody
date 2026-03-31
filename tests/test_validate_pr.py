@@ -154,6 +154,46 @@ def test_test_plan_path_matches_spec_slug() -> None:
     )
 
 
+def test_pr_draft_path_matches_spec_slug() -> None:
+    mod = _load_validate_pr_module()
+    assert (
+        mod.pr_draft_path_for_spec("docs/specs/03-linked-spec.md")
+        == ".ai/pr-description/03-linked-spec.md"
+    )
+
+
+def test_artifact_has_spec_link_detects_matching_spec(tmp_path: Path) -> None:
+    mod = _load_validate_pr_module()
+    draft_file = tmp_path / "03-linked-spec.md"
+    draft_file.write_text(
+        "\n".join(
+            [
+                "## Spec",
+                "- Spec: docs/specs/03-linked-spec.md",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    assert mod.artifact_has_spec_link(str(draft_file), "docs/specs/03-linked-spec.md") is True
+
+
+def test_artifact_checked_ac_ids_reads_from_file(tmp_path: Path) -> None:
+    mod = _load_validate_pr_module()
+    draft_file = tmp_path / "03-linked-spec.md"
+    draft_file.write_text(
+        "\n".join(
+            [
+                "## Acceptance Criteria",
+                "- [x] AC1 done",
+                "- [X] AC2 done",
+                "- [ ] AC3 pending",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    assert mod.artifact_checked_ac_ids(str(draft_file)) == {"AC1", "AC2"}
+
+
 def test_has_numbered_packet_name_requires_two_digit_prefix() -> None:
     mod = _load_validate_pr_module()
     assert mod.has_numbered_packet_name("docs/specs/03-linked-spec.md") is True

@@ -6,7 +6,7 @@ from __future__ import annotations
 import json
 import os
 import re
-import subprocess
+import subprocess  # nosec B404
 import sys
 from pathlib import Path
 
@@ -28,7 +28,7 @@ NUMBERED_PACKET_PATTERN = re.compile(r"^\d{2}-[a-z0-9][a-z0-9-]*\.md$", flags=re
 
 
 def run(cmd: list[str]) -> str:
-    return subprocess.check_output(cmd, text=True).strip()
+    return subprocess.check_output(cmd, text=True).strip()  # nosec B603
 
 
 def changed_files(base: str, head: str) -> list[str]:
@@ -101,6 +101,20 @@ def test_plan_path_for_spec(spec_path: str) -> str:
     return spec_path.replace("docs/specs/", "docs/test-plans/", 1)
 
 
+def pr_draft_path_for_spec(spec_path: str) -> str:
+    return spec_path.replace("docs/specs/", ".ai/pr-description/", 1)
+
+
+def artifact_has_spec_link(path: str, spec_path: str) -> bool:
+    content = Path(path).read_text(encoding="utf-8")
+    return spec_path in content
+
+
+def artifact_checked_ac_ids(path: str) -> set[str]:
+    content = Path(path).read_text(encoding="utf-8")
+    return checked_ac_ids(content)
+
+
 def main() -> int:
     event_path = os.environ.get("GITHUB_EVENT_PATH")
     if not event_path:
@@ -138,7 +152,9 @@ def main() -> int:
         errors.append("PR body must include a spec link like docs/specs/03-my-change.md.")
     if require_spec and has_spec_link(body):
         linked_spec = extract_spec_link(body)
-        assert linked_spec is not None
+        if linked_spec is None:
+            errors.append("PR body must include a valid spec link like docs/specs/03-my-change.md.")
+            linked_spec = ""
         if not Path(linked_spec).is_file():
             errors.append(f"Linked spec file not found: {linked_spec}")
         else:
@@ -176,6 +192,40 @@ def main() -> int:
                     "Code-changing PRs must add or update the matching test plan file: "
                     f"{test_plan_path}"
                 )
+            pr_draft_path = pr_draft_path_for_spec(linked_spec)
+            if not Path(pr_draft_path).is_file():
+                errors.append(f"Expected PR draft file not found: {pr_draft_path}")
+            elif not has_numbered_packet_name(pr_draft_path):
+                errors.append(
+                    "Matching PR drafts must use a two-digit prefix like "
+                    ".ai/pr-description/03-my-change.md: "
+                    f"{pr_draft_path}"
+                )
+            else:
+                if pr_draft_path not in files:
+                    errors.append(
+                        "Code-changing PRs must add or update the matching PR draft file: "
+                        f"{pr_draft_path}"
+                    )
+                if not artifact_has_spec_link(pr_draft_path, linked_spec):
+                    errors.append(
+                        f"PR draft must link the same spec as the PR body: {pr_draft_path}"
+                    )
+                draft_selected_acs = artifact_checked_ac_ids(pr_draft_path)
+                draft_missing_acs = sorted(valid_acs - draft_selected_acs)
+                draft_unknown_acs = sorted(draft_selected_acs - valid_acs)
+                if draft_missing_acs:
+                    draft_missing_acs_text = ", ".join(draft_missing_acs)
+                    errors.append(
+                        f"PR draft must check every acceptance criterion from {linked_spec}: "
+                        f"{draft_missing_acs_text}"
+                    )
+                if draft_unknown_acs:
+                    draft_unknown_acs_text = ", ".join(draft_unknown_acs)
+                    errors.append(
+                        f"Checked acceptance criteria not found in {linked_spec} "
+                        f"within PR draft {pr_draft_path}: {draft_unknown_acs_text}"
+                    )
 
     if errors:
         print("PR validation failed:")

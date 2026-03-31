@@ -1,4 +1,4 @@
-.PHONY: venv compile sync lint test precommit backend-dev frontend-dev db-up db-down migrate
+.PHONY: venv compile sync lint test security precommit backend-dev frontend-dev db-up db-down migrate
 
 PYTHON ?= python3
 
@@ -6,7 +6,7 @@ venv:
 	$(PYTHON) -m venv .venv
 
 compile:
-	. .venv/bin/python -m pip install -U pip setuptools wheel pip-tools
+	.venv/bin/python -m pip install -U pip setuptools wheel pip-tools
 	.venv/bin/pip-compile requirements.in -o requirements.txt
 	.venv/bin/pip-compile requirements-dev.in -o requirements-dev.txt
 
@@ -20,6 +20,10 @@ lint:
 
 test:
 	. .venv/bin/activate && PYTHONPATH=backend pytest
+
+security:
+	. .venv/bin/activate && bandit -q -r backend/app .github/scripts
+	. .venv/bin/activate && XDG_CACHE_HOME=/tmp/.cache pip-audit --no-deps --disable-pip --ignore-vuln CVE-2026-4539 -r requirements.txt -r requirements-dev.txt
 
 precommit:
 	. .venv/bin/activate && pre-commit run --all-files

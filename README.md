@@ -126,6 +126,18 @@ Use the next available two-digit prefix such as `03-frontend-selectable-candle-s
 
 Acceptance criteria in specs must be labeled `AC1`, `AC2`, `AC3`, and so on.
 
+## GitHub Enforcement
+
+- Protect `main` in GitHub with branch protection or a repository ruleset.
+- Require a pull request before merging into `main`.
+- Require these exact status checks before merging:
+  - `CI / test`
+  - `CodeQL / analyze`
+- Dismiss stale approvals when new commits are pushed.
+- Block force pushes and branch deletion on `main`.
+- Keep `.github/CODEOWNERS` enabled so review ownership stays explicit.
+- Let Dependabot manage weekly updates for `pip` and GitHub Actions dependencies.
+
 ## Security Review
 
 - Code-changing specs should include a `Security considerations` section so authors can call out auth/authz, input handling, secrets, data exposure, file access, network access, and dependency impact.

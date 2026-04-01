@@ -28,6 +28,11 @@ Check every AC defined in the linked spec before merge.
 - Additional commands:
   - ...
 
+## GitHub checks
+- Required checks for `main`:
+  - `CI / test`
+  - `CodeQL / analyze`
+
 ## Changelog
 - [ ] Add to `CHANGELOG.md` `Unreleased` if this change should be called out before the next explicit release.
 

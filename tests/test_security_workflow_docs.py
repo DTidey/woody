@@ -63,6 +63,18 @@ def test_repo_docs_describe_security_review_as_required_workflow_behavior() -> N
     assert "make security" in readme
 
 
+def test_historical_packet_zero_matches_current_required_artifacts() -> None:
+    spec_00 = read("docs/specs/00-ai-workflow-guardrails.md")
+    draft_00 = read(".ai/pr-description/00-ai-workflow-guardrails.md")
+    settings = read(".vscode/settings.json")
+
+    assert "**Status:** Done" in spec_00
+    assert "## Security considerations" in spec_00
+    assert "Spec: `docs/specs/00-ai-workflow-guardrails.md`" in draft_00
+    assert "## Security Review" in draft_00
+    assert '"makefile.configureOnOpen": false' in settings
+
+
 def test_makefile_and_ci_wire_security_automation() -> None:
     makefile = read("Makefile")
     ci = read(".github/workflows/ci.yml")

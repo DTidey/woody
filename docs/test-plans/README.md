@@ -7,4 +7,7 @@ Convention:
 - Test plan: `docs/test-plans/<nn>-<slug>.md`
 - PR draft: `.ai/pr-description/<nn>-<slug>.md`
 
-Test plans should map acceptance criteria to tests and capture edge cases and adversarial cases.
+Test plans should:
+- Use the same exact `<nn>-<slug>` packet name as the spec and PR draft.
+- Map acceptance criteria to tests.
+- Capture edge cases and adversarial cases.

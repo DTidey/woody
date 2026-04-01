@@ -18,8 +18,9 @@ Every spec should include:
 - Test guidance mapping AC -> tests
 
 Workflow:
-1) Create spec (Spec Writer)
-2) Implement to spec (Implementer)
-3) Add tests (Tester)
-4) Review against spec (Reviewer)
-5) Merge only when CI is green (Orchestrator)
+1. Create or update the spec (Spec Writer)
+2. Break the spec into tasks and a small commit plan (Orchestrator)
+3. Implement strictly to the spec (Implementer)
+4. Add tests and the matching test plan (Tester)
+5. Review against the spec and acceptance criteria (Reviewer)
+6. Merge only when CI is green and behavior matches the spec (Orchestrator)

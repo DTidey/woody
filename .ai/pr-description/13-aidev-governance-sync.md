@@ -1,7 +1,7 @@
 ## Summary
 - Port the newer portable governance automation from `aidev` into `woody`.
 - Add the narrow Dependabot validator bypass plus owner and Dependabot maintenance workflows.
-- Update workflow tests and action versions while preserving `woody`'s repo-specific CI commands.
+- Update workflow tests and action versions while preserving `woody`'s Makefile-driven CI validation flow.
 
 ## Spec
 - Spec: `docs/specs/13-aidev-governance-sync.md`
@@ -11,7 +11,7 @@
 ## Acceptance criteria
 - [x] AC1: `.github/scripts/validate_pr.py` in `woody` skips spec validation only for `dependabot[bot]` PRs whose changed files are limited to root dependency manifests and `.github/workflows/*.yml` or `.yaml`, and `tests/test_validate_pr.py` covers both the allow and reject cases.
 - [x] AC2: `woody` includes `.github/workflows/auto-approve-own-prs.yml` and `.github/workflows/auto-manage-dependabot-prs.yml` with the same narrow safety constraints now used in `aidev`, and `tests/test_security_workflow_docs.py` verifies those constraints.
-- [x] AC3: `woody` updates `.github/workflows/ci.yml` to `actions/checkout@v6` and `actions/setup-python@v6`, updates `.github/workflows/codeql.yml` to `github/codeql-action` `v4`, and preserves `woody`'s repo-specific CI commands.
+- [x] AC3: `woody` updates `.github/workflows/ci.yml` to `actions/checkout@v6` and `actions/setup-python@v6`, creates `.venv` before validation, runs `make compile`, `make sync`, `make lint`, `make security`, and `make test`, updates `.github/workflows/codeql.yml` to `github/codeql-action` `v4`, and preserves `woody`'s Makefile-driven validation flow.
 - [x] AC4: The `woody` workflow docs and role docs that describe packet alignment and blocker formatting are updated where needed so the documented process matches the current validation and automation behavior.
 
 ## Security review

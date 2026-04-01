@@ -15,7 +15,7 @@
 In scope:
 - Port the narrow Dependabot PR validation exception from `aidev` into `woody`.
 - Add the missing GitHub Actions workflows for owner-maintenance auto-approval and safe Dependabot auto-management.
-- Update `woody` CI and CodeQL workflow pins to the current portable `aidev` versions while preserving `woody`'s repo-specific install, lint, security, and test commands.
+- Update `woody` CI and CodeQL workflow pins to the current portable `aidev` versions while preserving `woody`'s repo-specific Makefile-driven lint, security, and test behavior.
 - Update tests and lightweight workflow docs/role docs so the new governance behavior is documented and enforced locally.
 
 Out of scope / non-goals:
@@ -26,7 +26,7 @@ Out of scope / non-goals:
 
 ## Assumptions
 - The next available packet prefix in `woody` is `13`.
-- `woody` should preserve its repo-specific CI commands such as direct `pip-compile`, direct `pip install`, `ruff`, and `PYTHONPATH=backend pytest` rather than copying `aidev`'s Makefile-wrapped CI steps verbatim.
+- `woody` should preserve its repo-specific validation behavior by creating `.venv` and then using its existing Makefile targets for lint, security, and test execution.
 - The auto-approval workflow should remain tightly scoped to PRs into `main` where the author matches the repository owner and the branch starts with `codex/`.
 - The Dependabot auto-management workflow should stay limited to dependency manifest changes and `.github/workflows/*.yml` or `.yaml` updates.
 
@@ -77,7 +77,7 @@ Dependabot PR not eligible for auto-management.
 ## Acceptance criteria
 - AC1: `.github/scripts/validate_pr.py` in `woody` skips spec validation only for `dependabot[bot]` PRs whose changed files are limited to root dependency manifests and `.github/workflows/*.yml` or `.yaml`, and `tests/test_validate_pr.py` covers both the allow and reject cases.
 - AC2: `woody` includes `.github/workflows/auto-approve-own-prs.yml` and `.github/workflows/auto-manage-dependabot-prs.yml` with the same narrow safety constraints now used in `aidev`, and `tests/test_security_workflow_docs.py` verifies those constraints.
-- AC3: `woody` updates `.github/workflows/ci.yml` to `actions/checkout@v6` and `actions/setup-python@v6`, updates `.github/workflows/codeql.yml` to `github/codeql-action` `v4`, and preserves `woody`'s repo-specific CI commands.
+- AC3: `woody` updates `.github/workflows/ci.yml` to `actions/checkout@v6` and `actions/setup-python@v6`, creates `.venv` before validation, runs `make compile`, `make sync`, `make lint`, `make security`, and `make test`, updates `.github/workflows/codeql.yml` to `github/codeql-action` `v4`, and preserves `woody`'s Makefile-driven validation flow.
 - AC4: The `woody` workflow docs and role docs that describe packet alignment and blocker formatting are updated where needed so the documented process matches the current validation and automation behavior.
 
 ## Security considerations
@@ -94,13 +94,13 @@ Dependabot PR not eligible for auto-management.
 - Dependabot PRs that mix dependency/workflow updates with backend, frontend, or test-file changes must still require normal spec validation.
 - Workflow-only Dependabot PRs under `.github/workflows/` should qualify for the validator bypass and auto-management.
 - Empty file lists must not qualify for Dependabot automation.
-- `woody`'s CI must keep using its own compile/install/test commands even while action versions are updated.
+- `woody`'s CI must create `.venv` before any Makefile target that activates it and must keep using the repo's existing Makefile validation flow.
 - Docs-only PRs should remain exempt from spec enforcement.
 
 ## Test guidance
 - AC1 -> Unit tests verify accepted Dependabot file lists and rejected source-file lists in `tests/test_validate_pr.py`
 - AC2 -> Content tests verify the owner-approval and Dependabot auto-management workflows, permissions, branch filters, author checks, file filters, approval command, and auto-merge command
-- AC3 -> Content tests verify `actions/checkout@v6`, `actions/setup-python@v6`, and `github/codeql-action/{init,autobuild,analyze}@v4` while preserving `woody`'s repo-specific CI commands
+- AC3 -> Content tests verify `actions/checkout@v6`, `actions/setup-python@v6`, `make venv`, `make compile`, `make sync`, `make lint`, `make security`, `make test`, and `github/codeql-action/{init,autobuild,analyze}@v4`
 - AC4 -> Run `make lint`, `make test`, and `make security`
 
 ## Decision log

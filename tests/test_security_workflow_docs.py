@@ -62,20 +62,22 @@ def test_makefile_and_ci_wire_security_automation() -> None:
     ci = read(".github/workflows/ci.yml")
     reqs = read("requirements-dev.in")
 
+    assert "PYTHON ?= python3" in makefile
+    assert "$(PYTHON) -m venv .venv" in makefile
     assert "security:" in makefile
     assert "bandit -q -r backend/app .github/scripts" in makefile
     assert "XDG_CACHE_HOME=/tmp/.cache pip-audit --no-deps --disable-pip" in makefile
     assert "--ignore-vuln CVE-2026-4539" in makefile
     assert "actions/checkout@v6" in ci
     assert "actions/setup-python@v6" in ci
-    assert "pip-compile requirements.in -o requirements.txt" in ci
-    assert "pip-compile requirements-dev.in -o requirements-dev.txt" in ci
-    assert "python -m pip install -r requirements-dev.txt" in ci
-    assert "ruff check ." in ci
-    assert "ruff format --check ." in ci
+    assert "name: Create virtualenv" in ci
+    assert "make venv" in ci
+    assert "make compile" in ci
+    assert "make sync" in ci
+    assert "make lint" in ci
     assert "name: Security" in ci
     assert "make security" in ci
-    assert "PYTHONPATH=backend pytest" in ci
+    assert "make test" in ci
     assert "bandit" in reqs
     assert "pip-audit" in reqs
 

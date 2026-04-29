@@ -188,7 +188,7 @@ typing-inspection==0.4.2
     #   pydantic-settings
 urllib3==2.6.3
     # via requests
-uvicorn[standard]==0.45.0
+uvicorn[standard]==0.46.0
     # via -r requirements.in
 uvloop==0.22.1
     # via uvicorn

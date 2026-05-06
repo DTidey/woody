@@ -110,9 +110,9 @@ pluggy==1.6.0
     # via pytest
 pre-commit==4.6.0
     # via -r requirements-dev.in
-psycopg[binary]==3.3.3
+psycopg[binary]==3.3.4
     # via -r requirements.in
-psycopg-binary==3.3.3
+psycopg-binary==3.3.4
     # via psycopg
 py-serializable==2.1.0
     # via cyclonedx-python-lib

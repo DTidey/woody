@@ -30,9 +30,9 @@ mako==1.3.10
     # via alembic
 markupsafe==3.0.3
     # via mako
-psycopg[binary]==3.3.3
+psycopg[binary]==3.3.4
     # via -r requirements.in
-psycopg-binary==3.3.3
+psycopg-binary==3.3.4
     # via psycopg
 pydantic==2.12.5
     # via

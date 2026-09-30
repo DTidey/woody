@@ -50,8 +50,6 @@ filelock==3.24.3
     # via
     #   cachecontrol
     #   virtualenv
-greenlet==3.3.2
-    # via sqlalchemy
 h11==0.16.0
     # via
     #   httpcore
@@ -157,7 +155,7 @@ ruff==0.16.8
     # via -r requirements-dev.in
 sortedcontainers==2.4.0
     # via cyclonedx-python-lib
-sqlalchemy==2.0.54
+sqlalchemy==2.1.1
     # via
     #   -r requirements.in
     #   alembic

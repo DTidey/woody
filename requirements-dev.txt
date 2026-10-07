@@ -44,7 +44,7 @@ defusedxml==0.7.1
     # via py-serializable
 distlib==0.4.0
     # via virtualenv
-fastapi==0.141.1
+fastapi==0.142.2
     # via -r requirements.in
 filelock==3.24.3
     # via
@@ -83,6 +83,8 @@ msgpack==1.1.2
     # via cachecontrol
 nodeenv==1.10.0
     # via pre-commit
+opentelemetry-api==1.45.1
+    # via fastapi
 packageurl-python==0.17.6
     # via cyclonedx-python-lib
 packaging==26.0
@@ -173,6 +175,7 @@ typing-extensions==4.15.0
     #   anyio
     #   cyclonedx-python-lib
     #   fastapi
+    #   opentelemetry-api
     #   psycopg
     #   pydantic
     #   pydantic-core

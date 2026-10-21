@@ -40,7 +40,7 @@ pydantic==2.12.5
     #   pydantic-settings
 pydantic-core==2.41.5
     # via pydantic
-pydantic-settings==2.15.0
+pydantic-settings==2.16.0
     # via -r requirements.in
 python-dotenv==1.2.2
     # via
@@ -63,6 +63,7 @@ typing-extensions==4.15.0
     #   psycopg
     #   pydantic
     #   pydantic-core
+    #   pydantic-settings
     #   sqlalchemy
     #   starlette
     #   typing-inspection

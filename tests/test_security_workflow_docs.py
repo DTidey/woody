@@ -1,8 +1,14 @@
+import re
 from pathlib import Path
 
 
 def read(path: str) -> str:
     return Path(path).read_text(encoding="utf-8")
+
+
+def uses_action(content: str, action: str) -> bool:
+    # Match any major version so Dependabot action bumps do not break these checks.
+    return re.search(rf"uses: {re.escape(action)}@v\d+\b", content) is not None
 
 
 def test_spec_template_includes_security_considerations_prompts() -> None:
@@ -68,8 +74,8 @@ def test_makefile_and_ci_wire_security_automation() -> None:
     assert "bandit -q -r backend/app .github/scripts" in makefile
     assert "XDG_CACHE_HOME=/tmp/.cache pip-audit --no-deps --disable-pip" in makefile
     assert "--ignore-vuln CVE-2026-4539" in makefile
-    assert "actions/checkout@v6" in ci
-    assert "actions/setup-python@v6" in ci
+    assert uses_action(ci, "actions/checkout")
+    assert uses_action(ci, "actions/setup-python")
     assert "name: Create virtualenv" in ci
     assert "make venv" in ci
     assert "make compile" in ci
@@ -94,9 +100,9 @@ def test_github_guardrails_files_exist_and_match_documented_checks() -> None:
 
     assert "name: CodeQL" in codeql
     assert "language: [python, actions]" in codeql
-    assert "github/codeql-action/init@v4" in codeql
-    assert "github/codeql-action/autobuild@v4" in codeql
-    assert "github/codeql-action/analyze@v4" in codeql
+    assert uses_action(codeql, "github/codeql-action/init")
+    assert uses_action(codeql, "github/codeql-action/autobuild")
+    assert uses_action(codeql, "github/codeql-action/analyze")
     assert "pull_request_target:" in auto_approve
     assert "branches: [main]" in auto_approve
     assert "pull-requests: write" in auto_approve
@@ -111,7 +117,7 @@ def test_github_guardrails_files_exist_and_match_documented_checks() -> None:
     assert "pull-requests: write" in auto_dependabot
     assert "github.event.pull_request.user.login == 'dependabot[bot]'" in auto_dependabot
     assert "startsWith(github.event.pull_request.head.ref, 'dependabot/')" in auto_dependabot
-    assert "uses: actions/github-script@v7" in auto_dependabot
+    assert uses_action(auto_dependabot, "actions/github-script")
     assert '"requirements.txt"' in auto_dependabot
     assert '".github/workflows/"' in auto_dependabot
     assert 'gh pr review "${{ github.event.pull_request.html_url }}" --approve' in auto_dependabot

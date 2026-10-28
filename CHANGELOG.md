@@ -12,3 +12,6 @@ Release policy:
 
 ### Added
 - Added a changelog and documented the explicit-release workflow.
+
+### Security
+- Refreshed Python lockfiles to clear known vulnerabilities in transitive dependencies and enabled the `main` branch ruleset so failing checks block merges.

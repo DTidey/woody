@@ -30,9 +30,9 @@ markupsafe==3.0.4
     # via mako
 opentelemetry-api==1.45.1
     # via fastapi
-psycopg[binary]==3.3.6
+psycopg[binary]==3.3.8
     # via -r requirements.in
-psycopg-binary==3.3.6
+psycopg-binary==3.3.8
     # via psycopg
 pydantic==2.14.1
     # via

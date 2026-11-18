@@ -11,7 +11,8 @@ jobs:
   auto-approve:
     if: >-
       github.event.pull_request.user.login == github.repository_owner &&
-      startsWith(github.event.pull_request.head.ref, 'codex/')
+      (startsWith(github.event.pull_request.head.ref, 'codex/') ||
+       startsWith(github.event.pull_request.head.ref, 'hermes/'))
     runs-on: ubuntu-latest
     steps:
       - name: Approve PR

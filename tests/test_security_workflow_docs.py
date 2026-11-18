@@ -120,6 +120,12 @@ def test_github_guardrails_files_exist_and_match_documented_checks() -> None:
     assert "pull-requests: write" in auto_approve
     assert "github.event.pull_request.user.login == github.repository_owner" in auto_approve
     assert "startsWith(github.event.pull_request.head.ref, 'codex/')" in auto_approve
+    assert "startsWith(github.event.pull_request.head.ref, 'hermes/')" in auto_approve
+    assert (
+        "github.event.pull_request.user.login == github.repository_owner &&\n"
+        "      (startsWith(github.event.pull_request.head.ref, 'codex/') ||\n"
+        "       startsWith(github.event.pull_request.head.ref, 'hermes/'))"
+    ) in auto_approve
     assert 'gh pr review "${{ github.event.pull_request.html_url }}" --approve' in auto_approve
     assert "name: Auto-manage Dependabot PRs" in auto_dependabot
     assert "pull_request_target:" in auto_dependabot

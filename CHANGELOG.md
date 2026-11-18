@@ -15,3 +15,4 @@ Release policy:
 
 ### Security
 - Refreshed Python lockfiles to clear known vulnerabilities in transitive dependencies and enabled the `main` branch ruleset so failing checks block merges.
+- Bumped transitive dependency `opentelemetry-api` from `1.45.1` to `1.45.2` to fix `CVE-2026-126360`.

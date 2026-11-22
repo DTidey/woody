@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import threading
+import time
 from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy import text
+from sqlalchemy import BigInteger, bindparam, text
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db_session
@@ -40,57 +42,52 @@ class CandleSeriesResponse(BaseModel):
     latest_timestamp: int
 
 
-def _load_candle_series(db: Session) -> list[CandleSeriesResponse]:
-    # The obvious DISTINCT ON query times out on the live candle table because it scans and
-    # sorts across the full history. This recursive/index-jump form enumerates one series key
-    # at a time from the existing unique index, then looks up the latest timestamp per series.
-    query = text(
-        """
-        WITH RECURSIVE series_keys AS (
-            (
-                SELECT c.exchange, c.symbol, c.timeframe
-                FROM public.candle c
-                ORDER BY c.exchange, c.symbol, c.timeframe
-                LIMIT 1
-            )
-            UNION ALL
-            SELECT next_key.exchange, next_key.symbol, next_key.timeframe
-            FROM series_keys current_key
-            CROSS JOIN LATERAL (
-                SELECT c.exchange, c.symbol, c.timeframe
-                FROM public.candle c
-                WHERE (c.exchange, c.symbol, c.timeframe) > (
-                    current_key.exchange,
-                    current_key.symbol,
-                    current_key.timeframe
-                )
-                ORDER BY c.exchange, c.symbol, c.timeframe
-                LIMIT 1
-            ) next_key
-        )
-        SELECT
-            series_keys.exchange,
-            series_keys.symbol,
-            series_keys.timeframe,
-            latest.latest_timestamp
-        FROM series_keys
-        CROSS JOIN LATERAL (
-            SELECT c.timestamp AS latest_timestamp
-            FROM public.candle c
-            WHERE c.exchange = series_keys.exchange
-              AND c.symbol = series_keys.symbol
-              AND c.timeframe = series_keys.timeframe
-            ORDER BY c.timestamp DESC
-            LIMIT 1
-        ) latest
-        ORDER BY
-        
-            latest.latest_timestamp DESC,
-            series_keys.exchange,
-            series_keys.symbol,
-            series_keys.timeframe
-        """
-    )
+# Production `public.candle` is a TimescaleDB hypertable with hundreds of weekly chunks, almost
+# all compressed. Any query that walks the full history (DISTINCT ON, recursive index-jump)
+# touches every chunk and exceeds the read-only role's statement timeout. Restricting to a recent
+# window lets the planner exclude all but the newest chunks. Series without candles in the window
+# (delisted symbols, stopped imports) are therefore not listed; /api/candles still serves them.
+# 7 days so stock series survive weekends/holidays and a missed nightly import.
+SERIES_LOOKBACK_MS = 7 * 24 * 60 * 60 * 1000
+SERIES_CACHE_TTL_SECONDS = 600.0
+
+# `since_ms` is rendered inline as an integer literal (literal_execute) rather than sent as a
+# server-side bind parameter: with a bind parameter, psycopg's auto-prepared generic plan only
+# gets runtime chunk exclusion (~1 s planning + ~3.4 s execution) instead of plan-time exclusion.
+# The value is always an int computed from the server clock, never request input.
+_SERIES_QUERY = text(
+    """
+    SELECT c.exchange, c.symbol, c.timeframe, max(c.timestamp) AS latest_timestamp
+    FROM public.candle c
+    WHERE c.timestamp >= :since_ms
+    GROUP BY c.exchange, c.symbol, c.timeframe
+    ORDER BY latest_timestamp DESC, c.exchange, c.symbol, c.timeframe
+    """
+).bindparams(bindparam("since_ms", type_=BigInteger, literal_execute=True))
+
+# Successful results (including an empty list) are cached per process. The lock is held while
+# querying so concurrent cold requests share one query. Exceptions are never cached.
+_series_cache_lock = threading.Lock()
+_series_cache: tuple[float, list[CandleSeriesResponse]] | None = None
+
+
+def _now_ms() -> int:
+    return time.time_ns() // 1_000_000
+
+
+def _monotonic() -> float:
+    return time.monotonic()
+
+
+def _clear_series_cache() -> None:
+    global _series_cache
+    with _series_cache_lock:
+        _series_cache = None
+
+
+def _query_candle_series(db: Session) -> list[CandleSeriesResponse]:
+    since_ms = int(_now_ms() - SERIES_LOOKBACK_MS)
+    query = _SERIES_QUERY.bindparams(since_ms=since_ms)
     return [
         CandleSeriesResponse(
             exchange=row.exchange,
@@ -100,6 +97,17 @@ def _load_candle_series(db: Session) -> list[CandleSeriesResponse]:
         )
         for row in db.execute(query)
     ]
+
+
+def _load_candle_series(db: Session) -> list[CandleSeriesResponse]:
+    global _series_cache
+    with _series_cache_lock:
+        now = _monotonic()
+        if _series_cache is not None and now - _series_cache[0] < SERIES_CACHE_TTL_SECONDS:
+            return list(_series_cache[1])
+        series = _query_candle_series(db)
+        _series_cache = (now, series)
+        return list(series)
 
 
 @router.get("", response_model=list[CandleResponse])

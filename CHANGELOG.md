@@ -16,6 +16,9 @@ Release policy:
 ### Changed
 - The auto-approve workflow now also approves repository-owner PRs from `hermes/` branches, alongside `codex/`.
 
+### Fixed
+- `GET /api/candles/series` no longer times out on the production TimescaleDB hypertable: it lists series with candles in the last 7 days and caches the result in-process for 10 minutes. Series with no candles in that window are no longer listed.
+
 ### Security
 - Refreshed Python lockfiles to clear known vulnerabilities in transitive dependencies and enabled the `main` branch ruleset so failing checks block merges.
 - Bumped transitive dependency `opentelemetry-api` from `1.45.1` to `1.45.2` to fix `CVE-2026-126360`.
